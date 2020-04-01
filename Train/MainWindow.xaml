@@ -1,0 +1,109 @@
+﻿<Window x:Class="Train.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Train"
+        mc:Ignorable="d"
+        Title="Маршрут" Height="450" Width="950"
+        xmlns:viewmodel="clr-namespace:Train.ViewModel"
+        xmlns:databinding="clr-namespace:Train.Converts"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        FontSize="14"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"     
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+    
+    <Window.DataContext>
+        <viewmodel:MainWindowViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <databinding:DateConverter x:Key="DateConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Список поездов" />
+        <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Text="Параметры поиска" />
+
+        <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding TrainsPath}" VirtualizingPanel.ScrollUnit="Pixel">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Text="Номер поезда" />
+                        <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Text="Станция отправления" />
+                        <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" Text="Станция прибытия" />
+                        <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" Text="Стоимость" />
+                        <TextBlock Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Text="Время отправления" />
+                        <TextBlock Grid.Column="0" Grid.Row="5" HorizontalAlignment="Left" Text="Время прибытия" />
+                        <TextBlock Grid.Column="0" Grid.Row="6" HorizontalAlignment="Left" Text="Время в пути" />
+                        
+                        <TextBlock Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Text="{Binding TrainNumber}" TextWrapping="WrapWithOverflow" />
+                        <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Text="{Binding DepartureStation}" />
+                        <TextBlock Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Text="{Binding ArrivalStation}" />
+                        <TextBlock Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" Text="{Binding Cost}" />
+                        <TextBlock Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" Text="{Binding DateStart, ConverterCulture=ru-RU}" />
+                        <TextBlock Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" Text="{Binding DateEnd, ConverterCulture=ru-RU}" />
+                        <TextBlock Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" Text="{Binding DateDiff, Converter={StaticResource DateConverter}}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" VerticalAlignment="Center" Text="Станция отправления:" TextWrapping="WrapWithOverflow"/>
+                <TextBlock Grid.Row="1" VerticalAlignment="Center" Text="Станция прибытия:" TextWrapping="WrapWithOverflow"/>
+                <TextBlock Grid.Row="2" VerticalAlignment="Center" Text="Поик по лучшему:" TextWrapping="WrapWithOverflow"/>
+
+                <ComboBox Grid.Row="0" VerticalAlignment="Center" Grid.Column="1" ItemsSource="{Binding Vertex}" SelectedItem="{Binding VertexStart}" />
+                <ComboBox Grid.Row="1" VerticalAlignment="Center" Grid.Column="1" ItemsSource="{Binding Vertex}" SelectedItem="{Binding VertexEnd}" />
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="по цене" />
+                    <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding CostOrTime}" Margin="10 0" />
+                    <TextBlock Text="по времени" />
+                </StackPanel>
+                <Button Content="Найти" Grid.Row="3" Grid.ColumnSpan="2" Command="{Binding Search, Mode=OneWay}" />
+                <TextBlock Grid.Row="4" Grid.ColumnSpan="2"  Text="{Binding ResultInfo}" TextWrapping="WrapWithOverflow" />
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>
